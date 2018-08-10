@@ -46,7 +46,7 @@ deploy-to-kubernetes:
         server: $OKE_MASTER
         token: $OKE_TOKEN
         insecure-skip-tls-verify: true
-        command: apply -f $WERCKER_OUTPUT_DIR/kubernetes/
+        command: apply -f $WERCKER_OUTPUT_DIR/kubernetes/ --namespace=$NS
 
     # Tell Kubernetes that we're going to wait 60 seconds for the deploy to be successful
     - kubectl:
@@ -54,7 +54,7 @@ deploy-to-kubernetes:
         server: $OKE_MASTER
         token: $OKE_TOKEN
         insecure-skip-tls-verify: true
-        command: patch deployment/get-ip -p '{"spec":{"progressDeadlineSeconds":300}}'
+        command: patch deployment/get-ip -p '{"spec":{"progressDeadlineSeconds":300}}' --namespace=$NS
 
     # Watch the Kubernetes deployment. Once the pods are considered healthy the step will exit 0
     # If they aren't healthy within 60 seconds, it will exit with a non 0 exit code, and cause the run to fail.
@@ -63,4 +63,4 @@ deploy-to-kubernetes:
         server: $OKE_MASTER
         token: $OKE_TOKEN
         insecure-skip-tls-verify: true
-        command: rollout status deployment/get-ip
+        command: rollout status deployment/get-ip --namespace=$NS
